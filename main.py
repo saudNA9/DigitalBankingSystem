@@ -154,3 +154,31 @@ def process_scheduled_payments(self):
                     except Exception as e:
                         logging.error(f"Failed to export transaction history: {e}")
 
+def generate_monthly_summary(self):
+    """Generate a monthly summary report."""
+    now = datetime.now()
+    current_month = now.month
+    current_year = now.year
+    summary = {
+        'deposits': 0,
+        'withdrawals': 0,
+        'interest': 0,
+        'payments': 0
+    }
+    for transaction in self.__transaction_history:
+        transaction_date = datetime.strptime(transaction['date'], "%A, %d %B %Y, at %I:%M%p")
+        if transaction_date.month == current_month and transaction_date.year == current_year:
+            if transaction['type'] == 'deposit':
+                summary['deposits'] += transaction['amount']
+            elif transaction['type'] == 'withdraw':
+                summary['withdrawals'] += transaction['amount']
+            elif transaction['type'] == 'interest':
+                summary['interest'] += transaction['amount']
+            elif 'automatic payment' in transaction['type']:
+                summary['payments'] += transaction['amount']
+    logging.info(f"Monthly Summary Report for {now.strftime('%B %Y')}:")
+    logging.info(f"Total Deposits: {summary['deposits']} {self.currency}")
+    logging.info(f"Total Withdrawals: {summary['withdrawals']} {self.currency}")
+    logging.info(f"Total Interest: {summary['interest']} {self.currency}")
+    logging.info(f"Total Scheduled Payments: {summary['payments']} {self.currency}")
+
