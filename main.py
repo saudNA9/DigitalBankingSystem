@@ -8,3 +8,49 @@ from tkinter import messagebox
 
 # Set up logging to stdout instead of stderr
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class BankAccount:
+    MAX_WITHDRAWAL_LIMIT = 5000  # Maximum withdrawal limit per transaction
+    LOW_BALANCE_THRESHOLD = 100  # Threshold for low balance alerts
+
+    def __init__(self, owner_name, password, currency="SAR"):
+        self.owner_name = owner_name
+        self.__balance = 0.0
+        self.__password = password
+        self.currency = currency
+        self.__transaction_history = []
+        self.__scheduled_payments = []
+
+    def deposit(self, amount):
+        """Deposit money into the account."""
+        try:
+            if amount <= 0:
+                raise ValueError("The amount must be greater than zero.")
+            self.__balance += amount
+            self.__record_transaction("deposit", amount)
+            logging.info(f"{amount} {self.currency} deposited successfully.")
+        except ValueError as e:
+            logging.error(e)
+
+    def withdraw(self, amount):
+        """Withdraw money from the account."""
+        try:
+            if amount <= 0:
+                raise ValueError("The amount must be greater than zero.")
+            if amount > self.MAX_WITHDRAWAL_LIMIT:
+                raise ValueError(f"Cannot withdraw more than {self.MAX_WITHDRAWAL_LIMIT} {self.currency} at a time.")
+            if self.__balance >= amount:
+                self.__balance -= amount
+                self.__record_transaction("withdraw", amount)
+                logging.info(f"{amount} {self.currency} withdrawn successfully.")
+                self._alert_low_balance()
+            else:
+                raise ValueError("Insufficient balance for this transaction.")
+        except ValueError as e:
+            logging.error(e)
+            self._alert_low_balance()
+
+    def get_balance(self):
+        """Return the current balance."""
+        return self.__balance
+
