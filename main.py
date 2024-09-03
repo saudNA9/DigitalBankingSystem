@@ -182,3 +182,49 @@ def generate_monthly_summary(self):
     logging.info(f"Total Interest: {summary['interest']} {self.currency}")
     logging.info(f"Total Scheduled Payments: {summary['payments']} {self.currency}")
 
+def show_gui(self):
+    """Display the GUI for the bank account."""
+    root = tk.Tk()
+    root.title("Bank Account Management")
+    gui = BankAccountGUI(root, self)
+    root.mainloop()
+
+class BankAccountGUI:
+    def __init__(self, root, bank_account):
+        self.root = root
+        self.bank_account = bank_account
+
+        # Owner's name label and entry (display only, no editing)
+        self.owner_label = tk.Label(root, text=f"Owner: {bank_account.owner_name}")
+        self.owner_label.pack()
+
+        # Deposit amount label and entry
+        self.deposit_label = tk.Label(root, text="Deposit Amount:")
+        self.deposit_label.pack()
+        self.deposit_entry = tk.Entry(root)
+        self.deposit_entry.pack()
+
+        # Withdraw amount label and entry
+        self.withdraw_label = tk.Label(root, text="Withdraw Amount:")
+        self.withdraw_label.pack()
+        self.withdraw_entry = tk.Entry(root)
+        self.withdraw_entry.pack()
+
+        # Interest rate label and entry
+        self.interest_label = tk.Label(root, text="Interest Rate (%):")
+        self.interest_label.pack()
+        self.interest_entry = tk.Entry(root)
+        self.interest_entry.pack()
+
+        # Buttons for actions
+        self.deposit_button = tk.Button(root, text="Deposit", command=self.deposit_money)
+        self.deposit_button.pack()
+
+        self.withdraw_button = tk.Button(root, text="Withdraw", command=self.withdraw_money)
+        self.withdraw_button.pack()
+
+        self.interest_button = tk.Button(root, text="Apply Interest", command=self.apply_interest)
+        self.interest_button.pack()
+
+        self.balance_button = tk.Button(root, text="Check Balance
+
