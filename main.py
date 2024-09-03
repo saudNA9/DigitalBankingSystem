@@ -107,3 +107,36 @@ def apply_interest(self, interest_rate):
         logging.info(f"Interest of {interest_rate}% applied successfully.")
     except ValueError as e:
         logging.error(e)
+
+def schedule_payment(self, amount, recipient, frequency_days):
+    """Schedule automatic payments."""
+    try:
+        if amount <= 0:
+            raise ValueError("The amount must be greater than zero.")
+        if self.__balance < amount:
+            raise ValueError("Insufficient balance to schedule this payment.")
+        now = datetime.now()
+        next_payment_date = now + timedelta(days=frequency_days)
+        self.__scheduled_payments.append({
+            'amount': amount,
+            'recipient': recipient,
+            'next_payment_date': next_payment_date,
+            'frequency_days': frequency_days
+        })
+        logging.info(f"Scheduled payment of {amount} {self.currency} to {recipient} every {frequency_days} days.")
+    except ValueError as e:
+        logging.error(e)
+
+def process_scheduled_payments(self):
+    """Process scheduled payments."""
+    now = datetime.now()
+    for payment in self.__scheduled_payments:
+        while now >= payment['next_payment_date']:
+            if self.__balance >= payment['amount']:
+                self.__balance -= payment['amount']
+                self.__record_transaction(f"automatic payment to {payment['recipient']}", payment['amount'])
+                payment['next_payment_date'] += timedelta(days=payment['frequency_days'])
+                logging.info(f"Processed scheduled payment of {payment['amount']} {self.currency} to {payment['recipient']}.")
+            else:
+                logging.warning(f"Failed to process payment of {payment['amount']} {self.currency} to {payment['recipient']} due to insufficient balance.")
+                break
