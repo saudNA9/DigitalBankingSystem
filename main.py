@@ -140,3 +140,17 @@ def process_scheduled_payments(self):
             else:
                 logging.warning(f"Failed to process payment of {payment['amount']} {self.currency} to {payment['recipient']} due to insufficient balance.")
                 break
+
+                def export_to_csv(self, filename="transaction_history.csv"):
+                    """Export transaction history to a CSV file."""
+                    try:
+                        with open(filename, mode='w', newline='') as file:
+                            writer = csv.writer(file)
+                            writer.writerow(["ID", "Type", "Amount", "Date"])
+                            for transaction in self.__transaction_history:
+                                writer.writerow([transaction['id'], transaction['type'], transaction['amount'],
+                                                 transaction['date']])
+                        logging.info(f"Transaction history exported to {filename}.")
+                    except Exception as e:
+                        logging.error(f"Failed to export transaction history: {e}")
+
