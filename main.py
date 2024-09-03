@@ -9,6 +9,7 @@ from tkinter import messagebox
 # Set up logging to stdout instead of stderr
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
 class BankAccount:
     MAX_WITHDRAWAL_LIMIT = 5000  # Maximum withdrawal limit per transaction
     LOW_BALANCE_THRESHOLD = 100  # Threshold for low balance alerts
@@ -54,140 +55,148 @@ class BankAccount:
         """Return the current balance."""
         return self.__balance
 
-def authenticate(self, password):
-    """Authenticate user by matching the password."""
-    return self.__password == password
+    def authenticate(self, password):
+        """Authenticate user by matching the password."""
+        return self.__password == password
 
-def __record_transaction(self, transaction_type, amount):
-    """Record transactions in the account's history."""
-    now = datetime.now()
-    formatted_date = now.strftime("%A, %d %B %Y, at %I:%M%p")
-    transaction_id = str(uuid.uuid4())
-    transaction = {
-        'id': transaction_id,
-        'type': transaction_type,
-        'amount': amount,
-        'date': formatted_date
-    }
-    self.__transaction_history.append(transaction)
-    logging.info(f"{transaction_type.capitalize()} of {amount} {self.currency} recorded on {formatted_date}.")
-
-def print_transaction_history(self):
-    """Print the transaction history."""
-    if not self.__transaction_history:
-        logging.info("No transactions found.")
-        return
-    for transaction in self.__transaction_history:
-        print(f"ID: {transaction['id']} | {transaction['type'].capitalize()} of {transaction['amount']} {self.currency} on {transaction['date']}.")
-
-def get_transaction_history(self):
-    """Return the transaction history."""
-    return self.__transaction_history
-
-def apply_interest(self, interest_rate):
-    """Apply interest to the account."""
-    try:
-        if interest_rate <= 0:
-            raise ValueError("Interest rate must be greater than zero.")
-        interest = self.__balance * (interest_rate / 100)
-        self.__balance += interest
-        self.__record_transaction("interest", interest)
-        logging.info(f"Interest of {interest_rate}% applied successfully.")
-    except ValueError as e:
-        logging.error(e)
-
-def apply_interest(self, interest_rate):
-    """Apply interest to the account."""
-    try:
-        if interest_rate <= 0:
-            raise ValueError("Interest rate must be greater than zero.")
-        interest = self.__balance * (interest_rate / 100)
-        self.__balance += interest
-        self.__record_transaction("interest", interest)
-        logging.info(f"Interest of {interest_rate}% applied successfully.")
-    except ValueError as e:
-        logging.error(e)
-
-def schedule_payment(self, amount, recipient, frequency_days):
-    """Schedule automatic payments."""
-    try:
-        if amount <= 0:
-            raise ValueError("The amount must be greater than zero.")
-        if self.__balance < amount:
-            raise ValueError("Insufficient balance to schedule this payment.")
+    def __record_transaction(self, transaction_type, amount):
+        """Record transactions in the account's history."""
         now = datetime.now()
-        next_payment_date = now + timedelta(days=frequency_days)
-        self.__scheduled_payments.append({
+        formatted_date = now.strftime("%A, %d %B %Y, at %I:%M%p")
+        transaction_id = str(uuid.uuid4())
+        transaction = {
+            'id': transaction_id,
+            'type': transaction_type,
             'amount': amount,
-            'recipient': recipient,
-            'next_payment_date': next_payment_date,
-            'frequency_days': frequency_days
-        })
-        logging.info(f"Scheduled payment of {amount} {self.currency} to {recipient} every {frequency_days} days.")
-    except ValueError as e:
-        logging.error(e)
+            'date': formatted_date
+        }
+        self.__transaction_history.append(transaction)
+        logging.info(f"{transaction_type.capitalize()} of {amount} {self.currency} recorded on {formatted_date}.")
 
-def process_scheduled_payments(self):
-    """Process scheduled payments."""
-    now = datetime.now()
-    for payment in self.__scheduled_payments:
-        while now >= payment['next_payment_date']:
-            if self.__balance >= payment['amount']:
-                self.__balance -= payment['amount']
-                self.__record_transaction(f"automatic payment to {payment['recipient']}", payment['amount'])
-                payment['next_payment_date'] += timedelta(days=payment['frequency_days'])
-                logging.info(f"Processed scheduled payment of {payment['amount']} {self.currency} to {payment['recipient']}.")
-            else:
-                logging.warning(f"Failed to process payment of {payment['amount']} {self.currency} to {payment['recipient']} due to insufficient balance.")
-                break
+    def get_transaction_history(self):
+        """Return the transaction history."""
+        return self.__transaction_history
 
-                def export_to_csv(self, filename="transaction_history.csv"):
-                    """Export transaction history to a CSV file."""
-                    try:
-                        with open(filename, mode='w', newline='') as file:
-                            writer = csv.writer(file)
-                            writer.writerow(["ID", "Type", "Amount", "Date"])
-                            for transaction in self.__transaction_history:
-                                writer.writerow([transaction['id'], transaction['type'], transaction['amount'],
-                                                 transaction['date']])
-                        logging.info(f"Transaction history exported to {filename}.")
-                    except Exception as e:
-                        logging.error(f"Failed to export transaction history: {e}")
+    def apply_interest(self, interest_rate):
+        """Apply interest to the account."""
+        try:
+            if interest_rate <= 0:
+                raise ValueError("Interest rate must be greater than zero.")
+            interest = self.__balance * (interest_rate / 100)
+            self.__balance += interest
+            self.__record_transaction("interest", interest)
+            logging.info(f"Interest of {interest_rate}% applied successfully.")
+        except ValueError as e:
+            logging.error(e)
 
-def generate_monthly_summary(self):
-    """Generate a monthly summary report."""
-    now = datetime.now()
-    current_month = now.month
-    current_year = now.year
-    summary = {
-        'deposits': 0,
-        'withdrawals': 0,
-        'interest': 0,
-        'payments': 0
-    }
-    for transaction in self.__transaction_history:
-        transaction_date = datetime.strptime(transaction['date'], "%A, %d %B %Y, at %I:%M%p")
-        if transaction_date.month == current_month and transaction_date.year == current_year:
-            if transaction['type'] == 'deposit':
-                summary['deposits'] += transaction['amount']
-            elif transaction['type'] == 'withdraw':
-                summary['withdrawals'] += transaction['amount']
-            elif transaction['type'] == 'interest':
-                summary['interest'] += transaction['amount']
-            elif 'automatic payment' in transaction['type']:
-                summary['payments'] += transaction['amount']
-    logging.info(f"Monthly Summary Report for {now.strftime('%B %Y')}:")
-    logging.info(f"Total Deposits: {summary['deposits']} {self.currency}")
-    logging.info(f"Total Withdrawals: {summary['withdrawals']} {self.currency}")
-    logging.info(f"Total Interest: {summary['interest']} {self.currency}")
-    logging.info(f"Total Scheduled Payments: {summary['payments']} {self.currency}")
+    def schedule_payment(self, amount, recipient, frequency_days):
+        """Schedule automatic payments."""
+        try:
+            if amount <= 0:
+                raise ValueError("The amount must be greater than zero.")
+            if self.__balance < amount:
+                raise ValueError("Insufficient balance to schedule this payment.")
+            now = datetime.now()
+            next_payment_date = now + timedelta(days=frequency_days)
+            self.__scheduled_payments.append({
+                'amount': amount,
+                'recipient': recipient,
+                'next_payment_date': next_payment_date,
+                'frequency_days': frequency_days
+            })
+            logging.info(f"Scheduled payment of {amount} {self.currency} to {recipient} every {frequency_days} days.")
+        except ValueError as e:
+            logging.error(e)
 
-def show_gui(self):
-    """Display the GUI for the bank account."""
-    root = tk.Tk()
-    root.title("Bank Account Management")
-    gui = BankAccountGUI(root, self)
-    root.mainloop()
+    def process_scheduled_payments(self):
+        """Process scheduled payments."""
+        now = datetime.now()
+        for payment in self.__scheduled_payments:
+            while now >= payment['next_payment_date']:
+                if self.__balance >= payment['amount']:
+                    self.__balance -= payment['amount']
+                    self.__record_transaction(f"automatic payment to {payment['recipient']}", payment['amount'])
+                    payment['next_payment_date'] += timedelta(days=payment['frequency_days'])
+                    logging.info(
+                        f"Processed scheduled payment of {payment['amount']} {self.currency} to {payment['recipient']}.")
+                else:
+                    logging.warning(
+                        f"Failed to process payment of {payment['amount']} {self.currency} to {payment['recipient']} due to insufficient balance.")
+                    break
+
+    def print_transaction_history(self):
+        """Print the transaction history."""
+        if not self.__transaction_history:
+            logging.info("No transactions found.")
+            return
+        for transaction in self.__transaction_history:
+            print(
+                f"ID: {transaction['id']} | {transaction['type'].capitalize()} of {transaction['amount']} {self.currency} on {transaction['date']}.")
+
+    def export_to_csv(self, filename="transaction_history.csv"):
+        """Export transaction history to a CSV file."""
+        try:
+            with open(filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["ID", "Type", "Amount", "Date"])
+                for transaction in self.__transaction_history:
+                    writer.writerow(
+                        [transaction['id'], transaction['type'], transaction['amount'], transaction['date']])
+            logging.info(f"Transaction history exported to {filename}.")
+        except Exception as e:
+            logging.error(f"Failed to export transaction history: {e}")
+
+    def generate_monthly_summary(self):
+        """Generate a monthly summary report."""
+        now = datetime.now()
+        current_month = now.month
+        current_year = now.year
+        summary = {
+            'deposits': 0,
+            'withdrawals': 0,
+            'interest': 0,
+            'payments': 0
+        }
+        for transaction in self.__transaction_history:
+            transaction_date = datetime.strptime(transaction['date'], "%A, %d %B %Y, at %I:%M%p")
+            if transaction_date.month == current_month and transaction_date.year == current_year:
+                if transaction['type'] == 'deposit':
+                    summary['deposits'] += transaction['amount']
+                elif transaction['type'] == 'withdraw':
+                    summary['withdrawals'] += transaction['amount']
+                elif transaction['type'] == 'interest':
+                    summary['interest'] += transaction['amount']
+                elif 'automatic payment' in transaction['type']:
+                    summary['payments'] += transaction['amount']
+        logging.info(f"Monthly Summary Report for {now.strftime('%B %Y')}:")
+        logging.info(f"Total Deposits: {summary['deposits']} {self.currency}")
+        logging.info(f"Total Withdrawals: {summary['withdrawals']} {self.currency}")
+        logging.info(f"Total Interest: {summary['interest']} {self.currency}")
+        logging.info(f"Total Scheduled Payments: {summary['payments']} {self.currency}")
+
+    def _alert_low_balance(self):
+        """Alert the user if the balance is below the threshold."""
+        if self.__balance < self.LOW_BALANCE_THRESHOLD:
+            message = f"Alert: Your balance is below {self.LOW_BALANCE_THRESHOLD} {self.currency}. Please add funds to avoid fees."
+            logging.warning(message)
+            self.send_notification(message)
+
+    def send_notification(self, message):
+        """Placeholder for sending notifications."""
+        logging.info(f"Notification: {message}")
+
+    def show_gui(self):
+        """Display the GUI for the bank account."""
+        root = tk.Tk()
+        root.title("Bank Account Management")
+        gui = BankAccountGUI(root, self)
+        root.mainloop()
+
+    @staticmethod
+    def create_user(owner_name, password, currency="SAR"):
+        """Create a new user account."""
+        return BankAccount(owner_name, password, currency)
+
 
 class BankAccountGUI:
     def __init__(self, root, bank_account):
@@ -226,5 +235,59 @@ class BankAccountGUI:
         self.interest_button = tk.Button(root, text="Apply Interest", command=self.apply_interest)
         self.interest_button.pack()
 
-        self.balance_button = tk.Button(root, text="Check Balance
+        self.balance_button = tk.Button(root, text="Check Balance", command=self.check_balance)
+        self.balance_button.pack()
 
+        self.history_button = tk.Button(root, text="Transaction History", command=self.show_transaction_history)
+        self.history_button.pack()
+
+    def deposit_money(self):
+        try:
+            amount = float(self.deposit_entry.get())
+            self.bank_account.deposit(amount)
+            messagebox.showinfo("Deposit", f"Deposited {amount} {self.bank_account.currency} successfully.")
+        except ValueError as e:
+            messagebox.showerror("Error", f"Invalid amount: {e}")
+
+    def withdraw_money(self):
+        try:
+            amount = float(self.withdraw_entry.get())
+            self.bank_account.withdraw(amount)
+            messagebox.showinfo("Withdraw", f"Withdrew {amount} {self.bank_account.currency} successfully.")
+        except ValueError as e:
+            messagebox.showerror("Error", f"Invalid amount: {e}")
+
+    def apply_interest(self):
+        try:
+            interest_rate = float(self.interest_entry.get())
+            self.bank_account.apply_interest(interest_rate)
+            messagebox.showinfo("Interest", f"Applied {interest_rate}% interest successfully.")
+        except ValueError as e:
+            messagebox.showerror("Error", f"Invalid interest rate: {e}")
+
+    def check_balance(self):
+        balance = self.bank_account.get_balance()
+        messagebox.showinfo("Balance", f"Current balance: {balance} {self.bank_account.currency}")
+
+    def show_transaction_history(self):
+        transactions = self.bank_account.get_transaction_history()
+        if not transactions:
+            messagebox.showinfo("Transaction History", "No transactions found.")
+        else:
+            history = "\n".join(
+                [f"{t['date']}: {t['type'].capitalize()} of {t['amount']} {self.bank_account.currency}" for t in
+                 transactions])
+            messagebox.showinfo("Transaction History", history)
+
+
+# Test the class with GUI
+if __name__ == "__main__":
+    # Create a new user account with authentication
+    account = BankAccount("Khalid", "securepassword")
+
+    # Authenticate user
+    if account.authenticate("securepassword"):
+        logging.info("Authentication successful!")
+        account.show_gui()
+    else:
+        logging.error("Authentication failed.")
