@@ -83,3 +83,27 @@ def print_transaction_history(self):
 def get_transaction_history(self):
     """Return the transaction history."""
     return self.__transaction_history
+
+def apply_interest(self, interest_rate):
+    """Apply interest to the account."""
+    try:
+        if interest_rate <= 0:
+            raise ValueError("Interest rate must be greater than zero.")
+        interest = self.__balance * (interest_rate / 100)
+        self.__balance += interest
+        self.__record_transaction("interest", interest)
+        logging.info(f"Interest of {interest_rate}% applied successfully.")
+    except ValueError as e:
+        logging.error(e)
+
+def apply_interest(self, interest_rate):
+    """Apply interest to the account."""
+    try:
+        if interest_rate <= 0:
+            raise ValueError("Interest rate must be greater than zero.")
+        interest = self.__balance * (interest_rate / 100)
+        self.__balance += interest
+        self.__record_transaction("interest", interest)
+        logging.info(f"Interest of {interest_rate}% applied successfully.")
+    except ValueError as e:
+        logging.error(e)
