@@ -71,3 +71,15 @@ def __record_transaction(self, transaction_type, amount):
     }
     self.__transaction_history.append(transaction)
     logging.info(f"{transaction_type.capitalize()} of {amount} {self.currency} recorded on {formatted_date}.")
+
+def print_transaction_history(self):
+    """Print the transaction history."""
+    if not self.__transaction_history:
+        logging.info("No transactions found.")
+        return
+    for transaction in self.__transaction_history:
+        print(f"ID: {transaction['id']} | {transaction['type'].capitalize()} of {transaction['amount']} {self.currency} on {transaction['date']}.")
+
+def get_transaction_history(self):
+    """Return the transaction history."""
+    return self.__transaction_history
