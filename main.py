@@ -54,3 +54,20 @@ class BankAccount:
         """Return the current balance."""
         return self.__balance
 
+def authenticate(self, password):
+    """Authenticate user by matching the password."""
+    return self.__password == password
+
+def __record_transaction(self, transaction_type, amount):
+    """Record transactions in the account's history."""
+    now = datetime.now()
+    formatted_date = now.strftime("%A, %d %B %Y, at %I:%M%p")
+    transaction_id = str(uuid.uuid4())
+    transaction = {
+        'id': transaction_id,
+        'type': transaction_type,
+        'amount': amount,
+        'date': formatted_date
+    }
+    self.__transaction_history.append(transaction)
+    logging.info(f"{transaction_type.capitalize()} of {amount} {self.currency} recorded on {formatted_date}.")
